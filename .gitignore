@@ -1,0 +1,16 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Editors and OS
+.idea/
+.vscode/
+.DS_Store
+
+# Backend
+backend/target/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
