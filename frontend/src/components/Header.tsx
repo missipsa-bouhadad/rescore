@@ -6,6 +6,7 @@ const links = [
   { to: "/classement", label: "Classement" },
   { to: "/residences", label: "Résidences" },
   { to: "/matchs", label: "Matchs" },
+  { to: "/connexion", label: "Connexion" },
 ];
 
 // Active link is green, others normal 

@@ -1,7 +1,10 @@
+import { useNavigate } from "react-router";
 import Button from "../components/Button";
 import { latestMatches, residenceRankings } from "../data/mockData";
 
 function HomePage() {
+  const navigate = useNavigate();
+
   return (
     <main className="mx-auto max-w-3xl px-4 py-8">
       {/* Hero */}
@@ -11,7 +14,7 @@ function HomePage() {
           Organisez des matchs entre résidences étudiantes et suivez le classement de votre ville.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
-          <Button>S'inscrire</Button>
+          <Button onClick={() => navigate("/inscription")}>S'inscrire</Button>
           <Button variant="outline">Voir le classement</Button>
         </div>
       </section>
