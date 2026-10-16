@@ -1,14 +1,21 @@
 import './App.css'
-import Button from "./components/Button";
+import { BrowserRouter, Route, Routes } from "react-router";
+import Header from "./components/Header";
+import HomePage from "./pages/HomePage";
+import NotFoundPage from "./pages/NotFoundPage";
 
 function App() {
   return (
-    <div className="min-h-screen bg-surface p-8 font-sans text-ink">
-      <h1 className="text-4xl font-bold text-primary">ReScore</h1>
-      <div className="mt-4 flex flex-wrap gap-3">
-        <Button>Primary</Button>
+    <BrowserRouter>
+      <div className="min-h-screen bg-surface font-sans text-ink">
+        <Header />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          {/* Unknown URL */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
       </div>
-    </div>
+    </BrowserRouter>
   );
 }
 
