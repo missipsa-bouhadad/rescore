@@ -1,7 +1,5 @@
 package com.rescore.backend.auth;
 
-import java.util.Locale;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,7 +37,7 @@ public class RegistrationService {
 
     @Transactional
     public RegisterResponse register(RegisterRequest request) {
-        String email = request.email().trim().toLowerCase(Locale.ROOT);
+        String email = request.email();
 
         // The email domain gives the university
         AllowedEmailDomain domain = domains.findByDomain(EmailDomain.extract(email)).orElseThrow(() -> badRequest("Email domain not allowed"));
