@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { ApiError, getResidences, register, type Residence } from "../api";
 import AuthLayout from "../components/AuthLayout";
 import Button from "../components/Button";
+import EmailSentMessage from "../components/EmailSentMessage";
 import Input from "../components/Input";
 import Select from "../components/Select";
 
@@ -11,7 +12,7 @@ const CITY = "pau";
 
 function RegisterPage() {
   const [residences, setResidences] = useState<Residence[]>([]);
-  const [submitted, setSubmitted] = useState(false);
+  const [sentTo, setSentTo] = useState("");
   const [loading, setLoading] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [error, setError] = useState("");
@@ -43,7 +44,7 @@ function RegisterPage() {
         password: String(form.get("password")),
         residenceId: Number(form.get("residence")),
       });
-      setSubmitted(true);
+      setSentTo(email);
     } catch (e) {
       // Errors about the email 
       if (e instanceof ApiError && e.status === 409) {
@@ -60,16 +61,17 @@ function RegisterPage() {
     }
   }
 
-  if (submitted) {
+  if (sentTo) {
     return (
       <AuthLayout title="Presque fini !" subtitle="Il ne reste qu'à confirmer votre adresse.">
-        <div className="flex h-full flex-col items-center justify-center text-center">
-          <span className="flex size-16 items-center justify-center rounded-full bg-primary/10 text-3xl">✉️</span>
-          <h2 className="mt-4 text-2xl font-bold">Vérifiez vos e-mails</h2>
-          <p className="mt-2 text-slate-600">
-            Un lien de confirmation vous a été envoyé. Il est valable 24 heures.
-          </p>
-        </div>
+        <EmailSentMessage>
+          Un lien de confirmation a été envoyé à <strong className="text-ink">{sentTo}</strong>. Il est valable 24
+          heures. Pensez à vérifier vos spams.
+        </EmailSentMessage>
+
+        <Link to="/connexion" className="mt-6 block text-center text-sm font-semibold text-primary hover:underline">
+          Retour à la connexion
+        </Link>
       </AuthLayout>
     );
   }
