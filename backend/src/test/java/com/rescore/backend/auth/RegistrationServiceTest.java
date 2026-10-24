@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,6 +33,7 @@ import com.rescore.backend.user.UserStatus;
 class RegistrationServiceTest {
 
     private UserRepository users;
+    private ApplicationEventPublisher events;
     private RegistrationService service;
 
     // domain etud.univ-pau.fr -> university 1 (UPPA) -> city 1 (Pau)
@@ -43,6 +45,8 @@ class RegistrationServiceTest {
         UniversityRepository universities = mock(UniversityRepository.class);
         ResidenceRepository residences = mock(ResidenceRepository.class);
         PasswordEncoder passwordEncoder = mock(PasswordEncoder.class);
+        VerificationTokenService tokens = mock(VerificationTokenService.class);
+        events = mock(ApplicationEventPublisher.class);
 
         // The domain belongs to university 1
         AllowedEmailDomain domain = mock(AllowedEmailDomain.class);
@@ -61,10 +65,10 @@ class RegistrationServiceTest {
 
         when(passwordEncoder.encode("password123")).thenReturn("hashed");
 
-        // The user given to save() is the user returned 
-        when(users.save(any(User.class))).thenAnswer(call -> call.getArgument(0));
+        // The token service always gives "token123"
+        when(tokens.createFor(any(User.class))).thenReturn("token123");
 
-        service = new RegistrationService(users, domains, universities, residences, passwordEncoder);
+        service = new RegistrationService(users, domains, universities, residences, passwordEncoder, tokens, events);
     }
 
     // User saved with the email, the hashed password and the PENDING status
@@ -77,6 +81,14 @@ class RegistrationServiceTest {
         assertThat(saved.getValue().getEmail()).isEqualTo("jean@etud.univ-pau.fr");
         assertThat(saved.getValue().getPasswordHash()).isEqualTo("hashed");
         assertThat(saved.getValue().getStatus()).isEqualTo(UserStatus.PENDING);
+    }
+
+    // After sign up, the event to send the email is published
+    @Test
+    void asksForConfirmationEmail() {
+        service.register(request("jean@etud.univ-pau.fr", 10L));
+
+        verify(events).publishEvent(new UserRegisteredEvent("jean@etud.univ-pau.fr", "Jean", "token123"));
     }
 
     // The domain must match exactly
