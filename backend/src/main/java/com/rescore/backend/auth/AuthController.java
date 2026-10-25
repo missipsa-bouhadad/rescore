@@ -17,9 +17,11 @@ import jakarta.validation.Valid;
 public class AuthController {
 
     private final RegistrationService registrationService;
+    private final VerificationTokenService verificationTokenService;
 
-    public AuthController(RegistrationService registrationService) {
+    public AuthController(RegistrationService registrationService, VerificationTokenService verificationTokenService) {
         this.registrationService = registrationService;
+        this.verificationTokenService = verificationTokenService;
     }
 
     @Operation(summary = "Sign up with a student email")
@@ -31,5 +33,15 @@ public class AuthController {
     @ResponseStatus(HttpStatus.CREATED)
     public RegisterResponse register(@Valid @RequestBody RegisterRequest request) {
         return registrationService.register(request);
+    }
+
+    @Operation(summary = "Confirm the email with the token of the link")
+    @ApiResponse(responseCode = "204", description = "Account is now ACTIVE")
+    @ApiResponse(responseCode = "400", description = "Invalid, expired or already used link")
+
+    @PostMapping("/api/auth/verify")
+    @ResponseStatus(HttpStatus.NO_CONTENT) // 204: success (nothing to send back)
+    public void verify(@Valid @RequestBody VerifyRequest request) {
+        verificationTokenService.confirm(request.token());
     }
 }

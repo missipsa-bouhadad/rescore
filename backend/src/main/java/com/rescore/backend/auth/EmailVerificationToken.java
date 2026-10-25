@@ -72,4 +72,17 @@ public class EmailVerificationToken {
     public Instant getCreatedAt() {
         return createdAt;
     }
+
+    public boolean isUsed() {
+        return usedAt != null;
+    }
+
+    public boolean isExpired() {
+        return Instant.now().isAfter(expiresAt);
+    }
+
+    // The link cannot be used again
+    public void markUsed() {
+        this.usedAt = Instant.now();
+    }
 }

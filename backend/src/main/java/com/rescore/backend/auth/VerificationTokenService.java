@@ -9,11 +9,14 @@ import java.time.Instant;
 import java.util.Base64;
 import java.util.HexFormat;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.rescore.backend.user.User;
 
-// Create a random token for the email link, hash it and save only the hash on db
+// Create the email link tokens (only the hash is saved on db) and check them on click
 @Service
 public class VerificationTokenService {
 
@@ -34,6 +37,26 @@ public class VerificationTokenService {
 
         tokens.save(new EmailVerificationToken(user, hash(token), Instant.now().plus(VALIDITY)));
         return token;
+    }
+
+    // Check the token of the link and activate the account
+    @Transactional
+    public void confirm(String token) {
+        EmailVerificationToken saved = tokens.findByTokenHash(hash(token)).orElseThrow(() -> badRequest("Invalid link"));
+
+        if (saved.isUsed()) {
+            throw badRequest("Link already used");
+        }
+        if (saved.isExpired()) {
+            throw badRequest("Link expired");
+        }
+
+        saved.markUsed();
+        saved.getUser().activate();
+    }
+
+    private static ResponseStatusException badRequest(String message) {
+        return new ResponseStatusException(HttpStatus.BAD_REQUEST, message);
     }
 
     // SHA-256 of the token, in hexadecimal (64 characters)

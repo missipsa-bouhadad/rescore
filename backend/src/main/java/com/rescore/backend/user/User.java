@@ -118,4 +118,10 @@ public class User {
     public Instant getDeletedAt() {
         return deletedAt;
     }
+
+    // Email confirmed (the user can log in)
+    public void activate() {
+        this.status = UserStatus.ACTIVE;
+        this.verifiedAt = Instant.now();
+    }
 }
