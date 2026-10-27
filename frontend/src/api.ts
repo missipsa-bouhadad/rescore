@@ -35,6 +35,10 @@ async function request<T>(url: string, options?: RequestInit): Promise<T> {
     const body = await response.json().catch(() => ({}));
     throw new ApiError(response.status, body.detail ?? "");
   }
+  // 204: success without a body
+  if (response.status === 204) {
+    return undefined as T;
+  }
   return response.json();
 }
 
@@ -46,5 +50,12 @@ export function register(data: RegisterData) {
   return request<unknown>("/api/auth/register", {
     method: "POST",
     body: JSON.stringify(data),
+  });
+}
+
+export function verifyEmail(token: string) {
+  return request<void>("/api/auth/verify", {
+    method: "POST",
+    body: JSON.stringify({ token }),
   });
 }
