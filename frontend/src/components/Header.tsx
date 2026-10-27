@@ -20,8 +20,13 @@ function Header() {
   return (
     <header className="bg-white shadow-sm">
       <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
-        <Link to="/" className="text-2xl font-bold text-primary">
-          ReScore
+        {/* Logo + name ("Re" green, "Score" yellow) */}
+        <Link to="/" className="flex items-center gap-2 text-2xl font-bold">
+          <img src="/favicon.svg" alt="" className="h-8 w-8" />
+          <span>
+            <span className="text-primary">Re</span>
+            <span className="text-accent">Score</span>
+          </span>
         </Link>
 
         {/* Burger button (mobile only) */}
