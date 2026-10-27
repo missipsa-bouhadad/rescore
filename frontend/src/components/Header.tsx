@@ -9,22 +9,24 @@ const links = [
   { to: "/connexion", label: "Connexion" },
 ];
 
-// Active link is green, others normal 
+// Active link has a light background
 function linkClass({ isActive }: { isActive: boolean }) {
-  return `block rounded-lg px-3 py-2 font-semibold ${isActive ? "text-primary" : "text-ink hover:text-primary"}`;
+  return `block rounded-lg px-3 py-2 font-semibold text-white ${isActive ? "bg-white/20" : "hover:bg-white/10"}`;
 }
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white shadow-sm">
+    <header className="bg-primary shadow-sm">
       <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
-        {/* Logo + name ("Re" green, "Score" yellow) */}
+        {/* Logo + name ("Re" white, "Score" yellow) */}
         <Link to="/" className="flex items-center gap-2 text-2xl font-bold">
-          <img src="/favicon.svg" alt="" className="h-8 w-8" />
+          <span className="rounded-lg bg-white p-1">
+            <img src="/favicon.svg" alt="" className="h-7 w-7" />
+          </span>
           <span>
-            <span className="text-primary">Re</span>
+            <span className="text-white">Re</span>
             <span className="text-accent">Score</span>
           </span>
         </Link>
@@ -32,7 +34,7 @@ function Header() {
         {/* Burger button (mobile only) */}
         <button
           type="button"
-          className="min-h-11 min-w-11 rounded-lg text-2xl md:hidden"
+          className="min-h-11 min-w-11 rounded-lg text-2xl text-white md:hidden"
           aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen(!menuOpen)}
@@ -52,7 +54,7 @@ function Header() {
 
       {/* Mobile menu */}
       {menuOpen && (
-        <nav className="border-t border-slate-200 px-4 py-2 md:hidden">
+        <nav className="border-t border-white/20 px-4 py-2 md:hidden">
           {links.map((link) => (
             <NavLink
               key={link.to}
